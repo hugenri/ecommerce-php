@@ -1,0 +1,136 @@
+.hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 250px;
+    padding: 0;
+    color: #fff;
+    background-color: #343a40;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+
+@media (max-width: 991.98px) {
+    .hero {
+        height: 200px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .hero {
+        height: 130px;
+    }
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+}
+
+.category-card {
+    transition: transform .2s, box-shadow .2s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .1);
+}
+
+.category-img {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+    border-radius: .375rem;
+}
+
+.categories-scroll {
+    position: relative;
+}
+
+.categories-track {
+    display: flex;
+    justify-content: safe center;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.categories-track::-webkit-scrollbar {
+    display: none;
+}
+
+.category-col {
+    flex: 0 0 auto;
+    width: calc(50% - .5rem);
+}
+
+@media (min-width: 768px) {
+    .category-col {
+        width: calc(33.333% - .667rem);
+    }
+}
+
+@media (min-width: 992px) {
+    .category-col {
+        width: calc(16.667% - .833rem);
+        min-width: calc(16.667% - .833rem + 20px);
+    }
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: #fff;
+    color: #0d6efd;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    cursor: pointer;
+    transition: background-color .2s, color .2s, box-shadow .2s;
+}
+
+.carousel-btn:hover {
+    background: #0d6efd;
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(13, 110, 253, .35);
+}
+
+.carousel-btn.prev {
+    left: -18px;
+}
+
+.carousel-btn.next {
+    right: -18px;
+}
+
+.carousel-btn[hidden] {
+    display: none;
+}
