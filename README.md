@@ -1,4 +1,4 @@
-# PHP Clean Ecommerce
+#  Ecommerce PHP
 
 Sistema de comercio electrónico desarrollado en **PHP 8.3** siguiendo los principios de **Clean Architecture**, **SOLID** y **PSR-4**. El proyecto implementa una arquitectura modular, inyección de dependencias propia, autenticación por roles, carrito persistente, integración con **PayPal** y **Conekta**, gestión de inventario, entregas y panel administrativo.
 
@@ -129,8 +129,8 @@ No existe una carpeta `Infrastructure`; las dependencias concretas viven dentro 
 ## Clonar el proyecto
 
 ```bash
-git clone https://github.com/TU_USUARIO/ecommerce-2026.git
-cd ecommerce-2026
+git clone https://github.com/hugenri/ecommerce-php.git
+cd ecommerce-php
 ```
 
 ## Instalar dependencias
@@ -152,7 +152,7 @@ Importar el esquema correspondiente.
 
 datos de accseso:
 
-http://ecommerce-2026.test/access/login
+http://ecommerce-php.test/access/login
 
 Ddministrador:
 
@@ -164,7 +164,7 @@ password: password12.H
 ## Virtual Host (Laragon)
 
 ```text
-http://ecommerce-2026.test
+http://ecommerce-php.test
 ```
 
 ---
