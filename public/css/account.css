@@ -1,0 +1,45 @@
+main {
+    background: #f0f2f5;
+}
+
+.sidebar .nav-link {
+    border-radius: .5rem;
+    color: #333;
+    padding: .6rem 1rem;
+}
+
+.sidebar .nav-link:hover {
+    background: #e9ecef;
+}
+
+.sidebar .nav-link.active {
+    background: #0d6efd;
+    color: #fff;
+}
+
+.sidebar .nav-link i {
+    width: 1.5rem;
+}
+
+.address-card {
+    border: 2px solid #dee2e6;
+    transition: border-color .2s;
+    position: relative;
+}
+
+.address-card.default {
+    border-color: #198754;
+    background: #f0fff4;
+}
+
+.address-card .default-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.order-img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}

@@ -1,0 +1,119 @@
+.table-actions .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.sortable:hover {
+    background-color: #f8f9fa;
+}
+
+.sortable i {
+    font-size: 0.7rem;
+    margin-left: 4px;
+}
+
+#loadingOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+#loadingOverlay.active {
+    display: flex;
+}
+
+.stock-low {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.stock-ok {
+    color: #198754;
+    font-weight: 600;
+}
+
+.badge-movement-purchase {
+    background-color: #198754;
+}
+
+.badge-movement-sale {
+    background-color: #0d6efd;
+}
+
+.badge-movement-adjustment {
+    background-color: #fd7e14;
+}
+
+.movement-quantity-positive {
+    color: #198754;
+    font-weight: 600;
+}
+
+.movement-quantity-negative {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.product-picker-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 180px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+}
+
+.product-picker-list li {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.product-picker-list li:last-child {
+    border-bottom: none;
+}
+
+.product-picker-list li:hover {
+    background-color: #f8f9fa;
+}
+
+.card.is-refreshing {
+    position: relative;
+}
+
+.card.is-refreshing::after {
+    content: "";
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid var(--bs-primary);
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: paneSpin 0.6s linear infinite;
+    z-index: 5;
+}
+
+.card.is-refreshing table {
+    opacity: 0.55;
+}
+
+@keyframes paneSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}

@@ -1,0 +1,79 @@
+body {
+    background-color: #f0f2f5;
+}
+
+.sidebar {
+    min-height: 100vh;
+    /* Fondo oscuro en TODOS los tamaños (regla base, sin media query).
+       !important: gana al fondo transparente que Bootstrap aplica al
+       Offcanvas responsive (offcanvas-lg) en escritorio. */
+    background-color: #1e293b !important;
+}
+
+/* Selector de mayor especificidad: garantiza que el fondo oscuro prevalece
+   SIEMPRE sobre .offcanvas-lg de Bootstrap (background-color: transparent
+   !important), sin depender del orden de carga de los estilos. */
+.sidebar.offcanvas-lg {
+    background-color: #1e293b !important;
+}
+
+/* Escritorio (>= lg): la columna del sidebar permanece fija en pantalla
+   mientras el contenido hace scroll. Bootstrap no resuelve este patrón
+   (en móvil < lg es un offcanvas fijo), por eso se acota a desktop. */
+@media (min-width: 992px) {
+    .offcanvas-lg.sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+    }
+
+    .offcanvas-lg.sidebar .offcanvas-body {
+        max-height: 100vh;
+        overflow-y: auto;
+    }
+}
+
+#alertContainer {
+    /* El contenedor de alertas es un overlay fijo (arriba a la derecha) de
+       z-index alto; cuando está vacío no debe interceptar clics (bloqueaba
+       la "X" del Offcanvas móvil). Las alertas reales vuelven a ser
+       interactivas con la regla siguiente. */
+    pointer-events: none;
+}
+
+#alertContainer .alert {
+    pointer-events: auto;
+}
+
+.sidebar .nav-link {
+    color: #94a3b8;
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    margin: 0.125rem 0.5rem;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+    background-color: #334155;
+    color: #fff;
+}
+
+.sidebar .nav-link i {
+    width: 1.5rem;
+    text-align: center;
+    margin-right: 0.5rem;
+}
+
+#loadingOverlay {
+    position: fixed;
+    inset: 0;
+
+    display: none;
+
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(255, 255, 255, 0.5);
+
+    z-index: 1000;
+}

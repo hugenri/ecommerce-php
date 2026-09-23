@@ -1,0 +1,225 @@
+/* ── Dropdown de categorías (navbar + bottom nav) ────── */
+.catalog-categories-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: none;
+    border: 0;
+    padding-right: 0;
+    font-weight: 600;
+    line-height: 1.5;
+    white-space: nowrap;
+}
+
+.catalog-categories-arrow {
+    font-size: .75rem;
+}
+
+.catalog-categories-panel {
+    position: fixed;
+    z-index: 1050;
+    width: 320px;
+    max-width: calc(100vw - 1rem);
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    box-shadow: 0 .5rem 1.5rem rgba(0, 0, 0, .12);
+    padding: 0;
+}
+
+.catalog-categories-panel--anchor-bottom {
+    max-height: calc(100vh - 4.5rem - env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+}
+
+.catalog-categories-panel[hidden],
+.catalog-drill-view[hidden] {
+    display: none;
+}
+
+/* ── Vista raíz: lista vertical de categorías ───────── */
+.catalog-category-list {
+    list-style: none;
+    margin: 0;
+    padding: .5rem;
+    max-height: 340px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.catalog-category + .catalog-category {
+    border-top: 1px solid #f1f3f5;
+}
+
+.catalog-category-link {
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+    width: 100%;
+    padding: .6rem .5rem;
+    background: none;
+    border: 0;
+    color: #212529;
+    text-align: left;
+    border-radius: .375rem;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+.catalog-category-link:hover,
+.catalog-category-link:focus-visible {
+    background-color: #f8f9fa;
+    color: #0d6efd;
+}
+
+.catalog-drill-icon {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    overflow: hidden;
+    border-radius: .375rem;
+}
+
+.catalog-category-icon {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.catalog-category-name {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.catalog-category-arrow {
+    flex: 0 0 auto;
+    color: #6c757d;
+    font-size: .75rem;
+}
+
+/* ── Vista de subcategorías: drill-down ─────────────── */
+.catalog-drill-view {
+    animation: catalog-drill-in .16s ease;
+}
+
+@keyframes catalog-drill-in {
+    from {
+        opacity: 0;
+        transform: translateX(8px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.catalog-drill-header {
+    padding: .5rem .5rem .75rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.catalog-drill-back {
+    display: inline-flex;
+    align-items: center;
+    gap: .125rem;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: #0d6efd;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.catalog-drill-back:hover,
+.catalog-drill-back:focus-visible {
+    color: #0a58ca;
+    text-decoration: underline;
+}
+
+.catalog-drill-all {
+    display: block;
+    padding: .6rem .5rem;
+    color: #0d6efd;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: .375rem;
+}
+
+.catalog-drill-all:hover,
+.catalog-drill-all:focus-visible {
+    color: #0a58ca;
+    text-decoration: underline;
+}
+
+.catalog-drill-sublist {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 .5rem;
+    max-height: 280px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.catalog-subcategory-link {
+    display: block;
+    padding: .5rem .5rem .5rem 1rem;
+    font-size: .9375rem;
+    color: #495057;
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    border-radius: .375rem;
+    transition: color .15s ease;
+}
+
+.catalog-subcategory-link:hover,
+.catalog-subcategory-link:focus-visible {
+    color: #0d6efd;
+}
+
+/* ── Breadcrumb ─────────────────────────────────────── */
+.catalog-breadcrumb .breadcrumb {
+    font-size: .8125rem;
+    margin-bottom: 0;
+}
+
+.catalog-breadcrumb .breadcrumb-item,
+.catalog-breadcrumb .breadcrumb-item.active {
+    color: #6c757d;
+}
+
+.catalog-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    color: #6c757d;
+}
+
+.catalog-breadcrumb .breadcrumb-item a {
+    color: #6c757d;
+    text-decoration: none;
+    transition: color .15s ease;
+}
+
+.catalog-breadcrumb .breadcrumb-item a:hover,
+.catalog-breadcrumb .breadcrumb-item a:focus-visible {
+    color: #0d6efd;
+}
+
+/* ── Toolbar: contador y ordenar por ────────────────── */
+.catalog-count {
+    font-size: .9375rem;
+}
+
+.catalog-sort-form {
+    flex: 0 0 auto;
+}
+
+.catalog-sort-form .form-label {
+    font-size: .875rem;
+    white-space: nowrap;
+}
+
+.catalog-sort-select {
+    border-radius: 10px;
+    min-height: 38px;
+    cursor: pointer;
+}

@@ -1,0 +1,27 @@
+# Entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Dependencias
+/vendor/
+
+# Tooling de agentes (metadata de sesión, resúmenes)
+/.claude/
+/.opencode/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs y temporales
+*.log
+*.tmp
+
+# Editores / IDE
+.idea/
+.vscode/
+
+/scrips/
+/docs/

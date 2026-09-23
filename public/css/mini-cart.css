@@ -1,0 +1,116 @@
+.mini-cart-offcanvas {
+    width: 400px !important;
+    max-width: 100vw !important;
+    transition: transform 250ms ease-in-out;
+}
+
+.mini-cart-offcanvas ~ .offcanvas-backdrop {
+    transition: opacity 250ms ease-in-out;
+}
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+    .mini-cart-offcanvas {
+        width: 360px !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .mini-cart-offcanvas {
+        width: 100vw !important;
+        max-width: 100vw !important;
+    }
+}
+
+.mini-cart-offcanvas .offcanvas-header {
+    flex-shrink: 0;
+}
+
+.mini-cart-body {
+    padding: 0;
+    overflow: hidden;
+}
+
+.mini-cart-items {
+    flex-grow: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.mini-cart-item .min-w-0 {
+    min-width: 0;
+}
+
+.mini-cart-right {
+    min-width: 0;
+}
+
+.mini-cart-line-total {
+    overflow-wrap: anywhere;
+    text-align: right;
+}
+
+.mini-cart-img-wrap {
+    flex: 0 0 auto;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: .375rem;
+    background: #f8f9fa;
+}
+
+.mini-cart-img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+
+.mini-cart-footer {
+    flex-shrink: 0;
+    background: #fff;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, .05);
+}
+
+.mini-cart-item .qty-stepper .form-control {
+    width: 44px;
+    flex: none;
+}
+
+.mini-cart-item .mini-cart-stock-badge {
+    font-size: .68rem;
+    line-height: 1;
+    margin-top: .25rem;
+}
+
+.mini-cart-item.is-busy [data-qty-inc],
+.mini-cart-item.is-busy [data-qty-dec],
+.mini-cart-item.is-busy [data-mini-remove] {
+    pointer-events: none;
+    opacity: .5;
+}
+
+.mini-cart-busy {
+    display: none;
+}
+
+.mini-cart-item.is-busy .mini-cart-busy {
+    display: inline-flex;
+    align-items: center;
+}
+
+.mini-cart-skeleton .skeleton-row {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.mini-cart-skeleton .mini-cart-img-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

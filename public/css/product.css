@@ -1,0 +1,22 @@
+.gallery-img {
+    width: 100%;
+    height: 400px;
+    object-fit: contain;
+    cursor: pointer;
+    border-radius: .5rem;
+}
+
+.gallery-thumb {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: .25rem;
+    padding: 4px;
+}
+
+.gallery-thumb:hover,
+.gallery-thumb.active {
+    border-color: #0d6efd;
+}
