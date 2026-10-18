@@ -47,6 +47,14 @@ class ErrorHandler
             return false;
         }
 
+        // Las deprecaciones no son fatales: se registran pero no se convierten
+        // en excepciones. Convertirlas provocaba errores 500 (p. ej. los avisos
+        // "implicitly nullable" al compilar clases en PHP 8.4+).
+        if (in_array($severity, [E_DEPRECATED, E_USER_DEPRECATED], true)) {
+            error_log(sprintf('[deprecated] %s en %s:%d', $message, $file, $line));
+            return true;
+        }
+
         throw new \ErrorException($message, 0, $severity, $file, $line);
     }
 

@@ -4,6 +4,7 @@ $pageTitle = 'Inicio - Tienda';
 $pageActive = 'home';
 $viewCss = ['/public/css/home.css'];
 $viewJs = ['/public/js/home.js'];
+$cartQuantities = $cartQuantities ?? [];
 ob_start();
 ?>
 
@@ -40,8 +41,12 @@ ob_start();
         <h2 class="mb-4">Productos recientes</h2>
         <div class="row g-4">
             <?php foreach ($recentProducts as $p): ?>
+                <?php
+                $stock = (int) $p->getStock();
+                $available = max(0, $stock - (int) ($cartQuantities[$p->getProductId()] ?? 0));
+                ?>
                 <div class="col-6 col-md-4 col-lg-3">
-                    <div class="card product-card">
+                    <div class="card product-card" data-product-card data-product-id="<?= $p->getProductId() ?>" data-stock="<?= $stock ?>">
                         <div class="card-img-wrapper">
                             <a href="/product/<?= $p->getProductId() ?>" class="product-image-link" aria-label="Ver detalle de <?= htmlspecialchars($p->getName()) ?>">
                                 <?php if ($p->getImage()): ?>
@@ -69,17 +74,16 @@ ob_start();
                                     <?php endif; ?>
                                 </div>
                             </div>
+                            <small class="mt-2 text-muted" data-product-stock-info>
+                                <?php if ($stock <= 0): ?>Sin stock<?php else: ?>Disponible: <?= $available ?> uds.<?php endif; ?>
+                            </small>
                             <div class="mt-2 d-grid gap-1">
-                                <?php if ($p->getStock() > 0): ?>
-                                    <form method="POST" action="/cart/add">
-                                        <input type="hidden" name="product_id" value="<?= $p->getProductId() ?>">
-                                        <button type="submit" class="btn btn-primary btn-sm w-100">
-                                            <i class="bi bi-cart-plus"></i> Agregar al carrito
-                                        </button>
-                                    </form>
-                                <?php else: ?>
-                                    <button class="btn btn-secondary btn-sm w-100" disabled>Agotado</button>
-                                <?php endif; ?>
+                                <form method="POST" action="/cart/add">
+                                    <input type="hidden" name="product_id" value="<?= $p->getProductId() ?>">
+                                    <button type="submit" class="btn btn-primary btn-sm w-100" data-add-to-cart-btn <?= $available <= 0 ? 'disabled' : '' ?>>
+                                        <i class="bi <?= $available <= 0 ? 'bi-cart-x' : 'bi-cart-plus' ?>"></i> <span data-add-to-cart-label><?= $stock <= 0 ? 'Agotado' : ($available <= 0 ? 'Stock máximo alcanzado' : 'Agregar al carrito') ?></span>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -99,8 +103,12 @@ ob_start();
         <h2 class="mb-4">Ofertas</h2>
         <div class="row g-4">
             <?php foreach ($saleProducts as $p): ?>
+                <?php
+                $stock = (int) $p->getStock();
+                $available = max(0, $stock - (int) ($cartQuantities[$p->getProductId()] ?? 0));
+                ?>
                 <div class="col-6 col-md-4 col-lg-3">
-                    <div class="card product-card border-danger">
+                    <div class="card product-card border-danger" data-product-card data-product-id="<?= $p->getProductId() ?>" data-stock="<?= $stock ?>">
                         <div class="card-img-wrapper">
                             <a href="/product/<?= $p->getProductId() ?>" class="product-image-link" aria-label="Ver detalle de <?= htmlspecialchars($p->getName()) ?>">
                                 <?php if ($p->getImage()): ?>
@@ -119,17 +127,16 @@ ob_start();
                                 <small class="text-muted text-decoration-line-through">$<?= number_format($p->getPrice(), 2) ?></small><br>
                                 <span class="fs-5 fw-bold text-danger">$<?= number_format($p->getPrice() * (1 - $p->getDiscount() / 100), 2) ?></span>
                             </div>
+                            <small class="mt-2 text-muted" data-product-stock-info>
+                                <?php if ($stock <= 0): ?>Sin stock<?php else: ?>Disponible: <?= $available ?> uds.<?php endif; ?>
+                            </small>
                             <div class="mt-2 d-grid gap-1">
-                                <?php if ($p->getStock() > 0): ?>
-                                    <form method="POST" action="/cart/add">
-                                        <input type="hidden" name="product_id" value="<?= $p->getProductId() ?>">
-                                        <button type="submit" class="btn btn-danger btn-sm w-100">
-                                            <i class="bi bi-cart-plus"></i> Agregar al carrito
-                                        </button>
-                                    </form>
-                                <?php else: ?>
-                                    <button class="btn btn-secondary btn-sm w-100" disabled>Agotado</button>
-                                <?php endif; ?>
+                                <form method="POST" action="/cart/add">
+                                    <input type="hidden" name="product_id" value="<?= $p->getProductId() ?>">
+                                    <button type="submit" class="btn btn-danger btn-sm w-100" data-add-to-cart-btn <?= $available <= 0 ? 'disabled' : '' ?>>
+                                        <i class="bi <?= $available <= 0 ? 'bi-cart-x' : 'bi-cart-plus' ?>"></i> <span data-add-to-cart-label><?= $stock <= 0 ? 'Agotado' : ($available <= 0 ? 'Stock máximo alcanzado' : 'Agregar al carrito') ?></span>
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>

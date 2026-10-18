@@ -2,6 +2,9 @@
 $pageTitle = htmlspecialchars($product->getName()) . ' - Tienda';
 $viewCss = ['/public/css/product.css'];
 $viewJs = ['/public/js/product.js'];
+$stock = (int) $product->getStock();
+$cartQuantity = (int) ($cartQuantity ?? 0);
+$available = max(0, $stock - $cartQuantity);
 ob_start();
 ?>
 
@@ -49,12 +52,16 @@ ob_start();
                 <tr>
                     <td class="text-muted">Disponibilidad</td>
                     <td>
-                        <?php if ($product->getStock() > 0): ?>
-                            <span class="text-success"><i class="bi bi-check-circle"></i> En stock (<?= $product->getStock() ?> uds.)</span>
+                        <?php if ($stock > 0): ?>
+                            <span class="text-success"><i class="bi bi-check-circle"></i> En stock (<?= $stock ?> uds.)</span>
                         <?php else: ?>
                             <span class="text-danger"><i class="bi bi-x-circle"></i> Agotado</span>
                         <?php endif; ?>
                     </td>
+                </tr>
+                <tr class="<?= $cartQuantity > 0 ? '' : 'd-none' ?>">
+                    <td class="text-muted">En tu carrito</td>
+                    <td data-detail-in-cart><?= $cartQuantity ?></td>
                 </tr>
             </table>
 
@@ -70,22 +77,19 @@ ob_start();
 
            
 
-            <div class="mt-4 d-flex gap-2">
-                <?php if ($product->getStock() > 0): ?>
-                    <form method="POST" action="/cart/add" class="d-flex gap-2 align-items-center">
-                        <input type="hidden" name="product_id" value="<?= $product->getProductId() ?>">
-                        <input type="hidden" name="redirect" value="/product/<?= $product->getProductId() ?>">
-                        <label class="visually-hidden" for="quantity">Cantidad</label>
-                        <div class="qty-stepper input-group" data-quantity-stepper data-min="1" data-max="<?= (int) $product->getStock() ?>">
-                            <button type="button" class="btn btn-outline-secondary" data-qty-dec aria-label="Disminuir cantidad">−</button>
-                            <input type="text" class="form-control qty-input" data-qty-input id="quantity" name="quantity" value="1" inputmode="numeric" readonly aria-label="Cantidad">
-                            <button type="button" class="btn btn-outline-secondary" data-qty-inc aria-label="Aumentar cantidad">+</button>
-                        </div>
-                        <button type="submit" class="btn btn-primary"><i class="bi bi-cart-plus"></i> Agregar al carrito</button>
-                    </form>
-                <?php else: ?>
-                    <button class="btn btn-secondary" disabled><i class="bi bi-cart-x"></i> Agotado</button>
-                <?php endif; ?>
+            <div class="mt-4 d-flex gap-2 align-items-center flex-wrap" data-product-detail data-product-id="<?= $product->getProductId() ?>" data-stock="<?= $stock ?>">
+                <form method="POST" action="/cart/add" class="d-flex gap-2 align-items-center">
+                    <input type="hidden" name="product_id" value="<?= $product->getProductId() ?>">
+                    <input type="hidden" name="redirect" value="/product/<?= $product->getProductId() ?>">
+                    <label class="visually-hidden" for="quantity">Cantidad</label>
+                    <div class="qty-stepper input-group" data-quantity-stepper data-min="1" data-max="<?= $available ?>">
+                        <button type="button" class="btn btn-outline-secondary" data-qty-dec aria-label="Disminuir cantidad">−</button>
+                        <input type="text" class="form-control qty-input" data-qty-input id="quantity" name="quantity" value="1" inputmode="numeric" readonly aria-label="Cantidad">
+                        <button type="button" class="btn btn-outline-secondary" data-qty-inc aria-label="Aumentar cantidad">+</button>
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-add-to-cart-btn <?= $available <= 0 ? 'disabled' : '' ?>><i class="bi bi-cart-plus"></i> Agregar al carrito</button>
+                </form>
+                <span class="text-warning small <?= $available <= 0 ? '' : 'd-none' ?>" data-detail-note role="status"><?= $stock <= 0 ? 'Agotado' : 'Has alcanzado el límite de stock' ?></span>
                 <a href="/shop" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Seguir comprando</a>
             </div>
         </div>

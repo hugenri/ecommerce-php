@@ -107,6 +107,29 @@ class CartService
     }
 
     /**
+     * Cantidad del producto en el carrito vigente (0 si no está presente).
+     */
+    public function getItemQuantity(int $productId): int
+    {
+        $items = $this->getItems();
+
+        return (int) ($items[(string) $productId]['quantity'] ?? 0);
+    }
+
+    /**
+     * Ejecuta una operación del carrito dentro de una transacción, reutilizando
+     * el mecanismo transaccional del repositorio (con soporte de anidamiento).
+     *
+     * @template T
+     * @param callable(): T $callback
+     * @return T
+     */
+    public function transaction(callable $callback): mixed
+    {
+        return $this->cartRepository->transaction($callback);
+    }
+
+    /**
      * Carrito vigente: por customer_id si hay sesión, o por guest_token
      * (creando la cookie solo cuando $mustCreate lo requiere, p. ej. al
      * agregar el primer ítem de un invitado).

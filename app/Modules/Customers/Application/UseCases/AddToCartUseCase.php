@@ -18,34 +18,55 @@ class AddToCartUseCase
      * Valida el producto y la cantidad, y agrega el ítem al carrito. El
      * carrito se lee con datos vivos del producto en cada lectura.
      *
+     * La validación es autoritativa en el servidor: la cantidad total resultante
+     * (lo que ya está en el carrito + lo solicitado) nunca puede superar el stock
+     * real del producto. La verificación y la escritura se hacen dentro de una
+     * transacción para que dos solicitudes simultáneas no puedan exceder el stock.
+     *
      * @throws \DomainException si el producto no está disponible, la cantidad
-     *                          no es un entero >= 1 o supera el stock.
+     *                          no es un entero >= 1 o supera el stock disponible.
      */
     public function execute(int|string|null $productId, string|int|null $quantity = 1): void
     {
         $productId = $this->normalizeProductId($productId);
         $quantity = $this->normalizeQuantity($quantity);
 
-        $product = $this->productRepository->findVisible($productId);
-        if (!$product) {
-            throw new \DomainException('El producto no está disponible.');
-        }
+        $this->cartService->transaction(function () use ($productId, $quantity): void {
+            $product = $this->productRepository->findVisible($productId);
+            if (!$product) {
+                throw new \DomainException('El producto no está disponible.');
+            }
 
-        if ($product->getStock() < $quantity) {
-            throw new \DomainException(
-                sprintf(
-                    'Stock insuficiente para %s. Disponible: %d, solicitado: %d.',
-                    $product->getName(),
-                    $product->getStock(),
-                    $quantity
-                )
+            $inCart = $this->cartService->getItemQuantity($product->getProductId());
+            $available = max(0, $product->getStock() - $inCart);
+
+            if ($available <= 0) {
+                throw new \DomainException(
+                    sprintf(
+                        'Ya tienes el máximo disponible de %s en el carrito (stock: %d).',
+                        $product->getName(),
+                        $product->getStock()
+                    )
+                );
+            }
+
+            if ($quantity > $available) {
+                throw new \DomainException(
+                    sprintf(
+                        'Solo puedes agregar %d unidad(es) más de %s (stock: %d, en carrito: %d).',
+                        $available,
+                        $product->getName(),
+                        $product->getStock(),
+                        $inCart
+                    )
+                );
+            }
+
+            $this->cartService->addItem(
+                productId: $product->getProductId(),
+                quantity: $quantity,
             );
-        }
-
-        $this->cartService->addItem(
-            productId: $product->getProductId(),
-            quantity: $quantity,
-        );
+        });
     }
 
     private function normalizeProductId(int|string|null $productId): int

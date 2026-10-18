@@ -240,9 +240,13 @@
         var input = row.querySelector('[data-qty-input]');
         var subtotal = row.querySelector('[data-mini-subtotal]');
         var badge = row.querySelector('.mini-cart-stock-badge');
+        var stepper = row.querySelector('[data-quantity-stepper]');
 
         var outOfStock = typeof item.stock === 'number' && item.stock <= 0;
 
+        if (stepper && typeof item.stock === 'number') {
+            stepper.setAttribute('data-max', String(item.stock > 0 ? item.stock : 0));
+        }
         if (input) {
             input.value = String(item.quantity);
         }
@@ -253,7 +257,7 @@
             badge.classList.toggle('d-none', !outOfStock);
         }
         if (global.QuantityStepper) {
-            global.QuantityStepper.sync(row);
+            global.QuantityStepper.sync(stepper || row);
         }
     }
 
@@ -267,6 +271,103 @@
             return;
         }
         syncItemState(row, item);
+    }
+
+    // ── Sincronización del stock en la página (catálogo, inicio, detalle) ──
+
+    function applyCardState(card, stock, qty) {
+        var available = Math.max(0, stock - qty);
+        var btn = card.querySelector('[data-add-to-cart-btn]');
+        var label = card.querySelector('[data-add-to-cart-label]');
+        var info = card.querySelector('[data-product-stock-info]');
+        var disabled = available <= 0;
+
+        if (btn) {
+            btn.disabled = disabled;
+            var icon = btn.querySelector('i');
+            if (icon) {
+                icon.classList.toggle('bi-cart-plus', !disabled);
+                icon.classList.toggle('bi-cart-x', disabled);
+            }
+        }
+        if (label) {
+            label.textContent = stock <= 0
+                ? 'Agotado'
+                : (available <= 0 ? 'Stock máximo alcanzado' : 'Agregar al carrito');
+        }
+        if (info) {
+            info.textContent = stock <= 0 ? 'Sin stock' : ('Disponible: ' + available + ' uds.');
+        }
+    }
+
+    function applyDetailState(scope, stock, qty) {
+        var available = Math.max(0, stock - qty);
+        var stepper = scope.querySelector('[data-quantity-stepper]');
+        var input = scope.querySelector('[data-qty-input]');
+        var btn = scope.querySelector('[data-add-to-cart-btn]');
+        var note = scope.querySelector('[data-detail-note]');
+        var inCartCell = scope.querySelector('[data-detail-in-cart]');
+        var availCell = scope.querySelector('[data-detail-available]');
+
+        if (inCartCell) {
+            inCartCell.textContent = String(qty);
+            var inCartRow = inCartCell.closest('tr');
+            if (inCartRow) {
+                inCartRow.classList.toggle('d-none', qty <= 0);
+            }
+        }
+        if (availCell) {
+            availCell.textContent = String(available);
+        }
+        if (stepper) {
+            stepper.setAttribute('data-max', String(available));
+            if (input && available > 0) {
+                var val = parseInt(input.value, 10) || 1;
+                input.value = String(Math.min(Math.max(val, 1), available));
+            }
+        }
+        if (btn) {
+            btn.disabled = available <= 0;
+        }
+        if (note) {
+            if (available <= 0) {
+                note.textContent = stock <= 0 ? 'Agotado' : 'Stock máximo alcanzado';
+                note.classList.remove('d-none');
+            } else {
+                note.classList.add('d-none');
+            }
+        }
+        if (stepper && global.QuantityStepper) {
+            global.QuantityStepper.sync(stepper);
+        }
+    }
+
+    function syncPageStock(payload) {
+        var items = payload && Array.isArray(payload.items) ? payload.items : [];
+        var byId = {};
+        items.forEach(function (item) {
+            byId[String(item.product_id)] = item;
+        });
+
+        document.querySelectorAll('[data-product-card]').forEach(function (card) {
+            var stock = parseInt(card.getAttribute('data-stock'), 10);
+            if (isNaN(stock)) {
+                return;
+            }
+            var item = byId[String(card.getAttribute('data-product-id'))];
+            var qty = item ? parseInt(item.quantity, 10) || 0 : 0;
+            applyCardState(card, stock, qty);
+        });
+
+        document.querySelectorAll('[data-product-detail]').forEach(function (scope) {
+            var stock = parseInt(scope.getAttribute('data-stock'), 10);
+            if (isNaN(stock)) {
+                return;
+            }
+            var item = byId[String(scope.getAttribute('data-product-id'))];
+            var qty = item ? parseInt(item.quantity, 10) || 0 : 0;
+            applyDetailState(scope, stock, qty);
+        });
     }
 
     function render(payload) {
@@ -294,6 +395,8 @@
         itemsEl.classList.toggle('d-none', !hasItems);
         emptyEl.classList.toggle('d-none', hasItems);
         footerEl.classList.toggle('d-none', !hasItems);
+
+        syncPageStock(payload);
 
         if (global.CartCounter) {
             global.CartCounter.set(count);
@@ -343,6 +446,17 @@
 
     // ── Mutaciones (sin peticiones concurrentes por producto) ──
 
+    // El backend responde con JSON de éxito o error (incluida la carga del
+    // carrito cuando rechaza). Se lee el cuerpo SIEMPRE, sin lanzar por el
+    // código HTTP, para poder restaurar el estado autoritativo en el cliente.
+    async function readJson(response) {
+        try {
+            return await response.json();
+        } catch (error) {
+            return null;
+        }
+    }
+
     function setBusy(productId, busy) {
         var key = String(productId);
         var row = rows[key];
@@ -356,7 +470,7 @@
                 if (inc) inc.disabled = true;
                 if (rem) rem.disabled = true;
             } else if (global.QuantityStepper) {
-                global.QuantityStepper.sync(row);
+                global.QuantityStepper.sync(row.querySelector('[data-quantity-stepper]') || row);
                 if (rem) rem.disabled = false;
             }
         }
@@ -384,15 +498,18 @@
                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
                 body: form
             });
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            const json = await response.json();
+            const json = await readJson(response);
             if (json && json.success) {
                 cartCache = json.data;
                 render(cartCache);
             } else if (json && json.message) {
+                if (json.data) {
+                    cartCache = json.data;
+                    render(cartCache);
+                }
                 announce(json.message);
+            } else {
+                throw new Error(`HTTP ${response.status}`);
             }
         } catch (error) {
             console.error(error);
@@ -417,15 +534,18 @@
                     'X-CSRF-Token': window.CSRF_TOKEN || ''
                 }
             });
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            const json = await response.json();
+            const json = await readJson(response);
             if (json && json.success) {
                 cartCache = json.data;
                 render(cartCache);
             } else if (json && json.message) {
+                if (json.data) {
+                    cartCache = json.data;
+                    render(cartCache);
+                }
                 announce(json.message);
+            } else {
+                throw new Error(`HTTP ${response.status}`);
             }
         } catch (error) {
             console.error(error);
@@ -439,10 +559,9 @@
 
     const addToCart = async (form) => {
         const data = new FormData(form);
-        const submitBtn = form.querySelector('[type="submit"]');
-        const wasDisabled = submitBtn ? submitBtn.disabled : false;
+        const submitBtn = form.querySelector('[data-add-to-cart-btn]') || form.querySelector('[type="submit"]');
 
-        if (submitBtn && !wasDisabled) {
+        if (submitBtn) {
             submitBtn.disabled = true;
         }
 
@@ -452,10 +571,7 @@
                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
                 body: data
             });
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            const json = await response.json();
+            const json = await readJson(response);
             if (json && json.success) {
                 cartCache = json.data;
                 render(cartCache);
@@ -463,13 +579,24 @@
                 openedFrom = submitBtn || form;
                 offcanvas.show();
             } else if (json && json.message) {
+                if (json.data) {
+                    cartCache = json.data;
+                    render(cartCache);
+                }
                 announce(json.message);
+            } else {
+                throw new Error(`HTTP ${response.status}`);
             }
         } catch (error) {
             console.error(error);
+            if (cartCache) {
+                syncPageStock(cartCache);
+            }
             announce('No se pudo agregar el producto al carrito.');
         } finally {
-            if (submitBtn && !wasDisabled) {
+            // El estado habilitado/deshabilitado lo gobierna syncPageStock según
+            // el stock. Solo se rehabilita el botón si no hay payload de respaldo.
+            if (!cartCache && submitBtn) {
                 submitBtn.disabled = false;
             }
         }

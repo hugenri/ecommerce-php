@@ -5,11 +5,18 @@
  * Espera:
  *   $product             App\Modules\Products\Domain\Product
  *   $addToCartRedirect   string  (opcional) URL de retorno tras agregar al carrito
+ *   $cartQuantity        int     (opcional) unidades del producto ya en el carrito
  */
 $addToCartRedirect = $addToCartRedirect ?? '';
+$cartQuantity = (int) ($cartQuantity ?? 0);
+$stock = (int) $product->getStock();
+$available = max(0, $stock - $cartQuantity);
+$addDisabled = $available <= 0;
+$buttonLabel = $stock <= 0 ? 'Agotado' : ($available <= 0 ? 'Stock máximo alcanzado' : 'Agregar al carrito');
+$buttonIcon = $addDisabled ? 'bi-cart-x' : 'bi-cart-plus';
 ?>
 <div class="col-6 col-md-4">
-    <div class="card product-card">
+    <div class="card product-card" data-product-card data-product-id="<?= $product->getProductId() ?>" data-stock="<?= $stock ?>">
         <div class="card-img-wrapper">
             <a href="/product/<?= $product->getProductId() ?>" class="product-image-link" aria-label="Ver detalle de <?= htmlspecialchars($product->getName()) ?>">
                 <?php if ($product->getImage()): ?>
@@ -34,23 +41,19 @@ $addToCartRedirect = $addToCartRedirect ?? '';
                     <span class="fs-5 fw-bold text-primary">$<?= number_format($product->getPrice(), 2) ?></span>
                 <?php endif; ?>
             </div>
-            <?php if ($product->getStock() === 0): ?>
-                <span class="badge bg-warning text-dark mt-2">Agotado</span>
-            <?php endif; ?>
+            <small class="mt-2 text-muted" data-product-stock-info>
+                <?php if ($stock <= 0): ?>Sin stock<?php else: ?>Disponible: <?= $available ?> uds.<?php endif; ?>
+            </small>
             <div class="mt-2 d-grid gap-1">
-                <?php if ($product->getStock() > 0): ?>
-                    <form method="POST" action="/cart/add">
-                        <input type="hidden" name="product_id" value="<?= $product->getProductId() ?>">
-                        <?php if ($addToCartRedirect !== ''): ?>
-                            <input type="hidden" name="redirect" value="<?= htmlspecialchars($addToCartRedirect) ?>">
-                        <?php endif; ?>
-                        <button type="submit" class="btn btn-primary btn-sm w-100">
-                            <i class="bi bi-cart-plus"></i> Agregar al carrito
-                        </button>
-                    </form>
-                <?php else: ?>
-                    <button class="btn btn-secondary btn-sm w-100" disabled>Agotado</button>
-                <?php endif; ?>
+                <form method="POST" action="/cart/add">
+                    <input type="hidden" name="product_id" value="<?= $product->getProductId() ?>">
+                    <?php if ($addToCartRedirect !== ''): ?>
+                        <input type="hidden" name="redirect" value="<?= htmlspecialchars($addToCartRedirect) ?>">
+                    <?php endif; ?>
+                    <button type="submit" class="btn btn-primary btn-sm w-100" data-add-to-cart-btn <?= $addDisabled ? 'disabled' : '' ?>>
+                        <i class="bi <?= $buttonIcon ?>"></i> <span data-add-to-cart-label><?= $buttonLabel ?></span>
+                    </button>
+                </form>
             </div>
         </div>
     </div>

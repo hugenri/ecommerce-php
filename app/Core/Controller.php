@@ -72,9 +72,9 @@ abstract class Controller
         $this->response->success($data, $message, $statusCode, $meta);
     }
 
-    protected function error(string $message, int $statusCode = 400, $errors = null): void
+    protected function error(string $message, int $statusCode = 400, $errors = null, $data = null): void
     {
-        $this->response->error($message, $statusCode, $errors);
+        $this->response->error($message, $statusCode, $errors, $data);
     }
 
     protected function validationError($errors, string $message = 'Errores de validación.'): void

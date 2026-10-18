@@ -24,12 +24,12 @@ class Response
         ], $statusCode);
     }
 
-    public function error(string $message, int $statusCode = 400, mixed $errors = null): void
+    public function error(string $message, int $statusCode = 400, mixed $errors = null, mixed $data = null): void
     {
         $this->json([
             'success' => false,
             'message' => $message,
-            'data' => null,
+            'data' => $data,
             'errors' => $errors,
             'meta' => [],
         ], $statusCode);

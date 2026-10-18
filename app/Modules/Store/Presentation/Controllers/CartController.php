@@ -7,6 +7,7 @@ namespace App\Modules\Store\Presentation\Controllers;
 use App\Core\Controller;
 use App\Modules\Customers\Application\Services\CartService;
 use App\Modules\Customers\Application\UseCases\AddToCartUseCase;
+use App\Modules\Customers\Application\UseCases\UpdateCartQuantityUseCase;
 use App\Modules\Products\Domain\ProductRepositoryInterface;
 use App\Http\Request;
 use App\Framework\Session\SessionManagerInterface;
@@ -17,6 +18,7 @@ class CartController extends Controller
 
     public function __construct(
         private AddToCartUseCase $addToCartUseCase,
+        private UpdateCartQuantityUseCase $updateCartQuantityUseCase,
         private ProductRepositoryInterface $productRepository,
         private CartService $cartService,
         private Request $request,
@@ -54,7 +56,7 @@ class CartController extends Controller
             $this->addToCartUseCase->execute($productId, $quantity);
         } catch (\DomainException $e) {
             if ($this->isAjax()) {
-                $this->error($e->getMessage());
+                $this->error($e->getMessage(), 400, null, $this->cartPayload());
                 return;
             }
             $this->redirect('/shop');
@@ -76,11 +78,14 @@ class CartController extends Controller
     public function updateCart()
     {
         $data = $this->request->post();
-        $productId = (int) ($data['product_id'] ?? 0);
-        $quantity = (int) ($data['quantity'] ?? 0);
+        $productId = $data['product_id'] ?? 0;
+        $quantity = $data['quantity'] ?? 0;
 
-        if ($productId > 0) {
-            $this->cartService->updateQuantity($productId, $quantity);
+        try {
+            $this->updateCartQuantityUseCase->execute($productId, $quantity);
+        } catch (\DomainException $e) {
+            $this->error($e->getMessage(), 400, null, $this->cartPayload());
+            return;
         }
 
         $this->success($this->cartPayload());

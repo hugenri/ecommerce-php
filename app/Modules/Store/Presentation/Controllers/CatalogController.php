@@ -139,7 +139,24 @@ class CatalogController extends Controller
             'searchQuery' => $search,
             'customer' => $customer,
             'cartCount' => $cartCount,
+            'cartQuantities' => $this->cartQuantityMap(),
         ]);
+    }
+
+    /**
+     * Mapa product_id => cantidad ya presente en el carrito vigente, para que
+     * las tarjetas del catálogo reflejen el stock disponible real en el render.
+     *
+     * @return array<int, int>
+     */
+    private function cartQuantityMap(): array
+    {
+        $map = [];
+        foreach ($this->cartService->getItems() as $item) {
+            $map[(int) $item['product_id']] = (int) $item['quantity'];
+        }
+
+        return $map;
     }
 
     public function product(int $id)
@@ -173,6 +190,7 @@ class CatalogController extends Controller
             'subcategoryName' => $subcategoryName,
             'customer' => $customer,
             'cartCount' => $cartCount,
+            'cartQuantity' => $this->cartService->getItemQuantity($product->getProductId()),
         ]);
     }
 }

@@ -16,6 +16,7 @@
 
     let pendingConfirm = null;
     let processing = false;
+    let lastErrorPayload = null;
     const busyRows = {};
 
     function money(value) {
@@ -82,10 +83,12 @@
             const message = json && json.message
                 ? json.message
                 : 'Ocurrió un error inesperado. Inténtalo de nuevo.';
+            lastErrorPayload = json && json.data ? json.data : null;
             showMessage(message);
             return null;
         }
 
+        lastErrorPayload = null;
         hideMessage();
         return json.data;
     }
@@ -130,7 +133,7 @@
         }
 
         if (window.QuantityStepper) {
-            window.QuantityStepper.sync(row);
+            window.QuantityStepper.sync(row.querySelector('[data-quantity-stepper]') || row);
         }
         if (removeLink) removeLink.classList.remove('disabled');
     }
@@ -162,6 +165,10 @@
             const payload = await postUpdate(productId, value);
             if (payload) {
                 render(payload);
+            } else if (lastErrorPayload) {
+                // El servidor rechazó la cantidad (supera el stock): restaura el
+                // estado autoritativo que devolvió en el error.
+                render(lastErrorPayload);
             }
         } catch (error) {
             showMessage('No fue posible conectar con el servidor.');
@@ -196,7 +203,7 @@
                 );
             }
             if (window.QuantityStepper) {
-                window.QuantityStepper.sync(row);
+                window.QuantityStepper.sync(stepper || row);
             }
         });
 

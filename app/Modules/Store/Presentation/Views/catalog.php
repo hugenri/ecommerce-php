@@ -7,6 +7,7 @@ $currentCategoryId = ($currentCategory === '' || $currentCategory === null) ? nu
 $currentSubcategoryId = ($currentSubcategory === '' || $currentSubcategory === null) ? null : (int) $currentSubcategory;
 $currentSort = is_string($currentSort) ? $currentSort : 'newest';
 $isSearch = $search !== '';
+$cartQuantities = $cartQuantities ?? [];
 $totalProducts = (int) ($meta['total'] ?? 0);
 $countWord = $totalProducts === 1 ? 'producto' : 'productos';
 
@@ -102,6 +103,7 @@ $pageUrl = static function (int $page) use ($search, $currentCategoryId, $curren
             <?php foreach ($products as $p): ?>
                 <?php $product = $p; ?>
                 <?php $addToCartRedirect = '/shop'; ?>
+                <?php $cartQuantity = (int) ($cartQuantities[$product->getProductId()] ?? 0); ?>
                 <?php require $sharedViewsPath . '/Components/ProductCard.php'; ?>
             <?php endforeach; ?>
         </div>

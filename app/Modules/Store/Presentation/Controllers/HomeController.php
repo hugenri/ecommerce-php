@@ -40,12 +40,18 @@ class HomeController extends Controller
         $siteSettings = $this->settingsService->getSiteSettings();
         $homeBanner = $this->settingsService->getHeroBanner();
 
+        $cartQuantities = [];
+        foreach ($this->cartService->getItems() as $item) {
+            $cartQuantities[(int) $item['product_id']] = (int) $item['quantity'];
+        }
+
         $this->view('home', [
             'categories' => $categories,
             'recentProducts' => $recentProducts,
             'saleProducts' => $saleProducts,
             'customer' => $customer,
             'cartCount' => $cartCount,
+            'cartQuantities' => $cartQuantities,
             'siteSettings' => $siteSettings,
             'homeBanner' => $homeBanner,
         ]);
