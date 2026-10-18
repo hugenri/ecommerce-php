@@ -1,6 +1,6 @@
 #  Ecommerce PHP
 
-Sistema de comercio electrónico desarrollado en **PHP 8.3** siguiendo los principios de **Clean Architecture**, **SOLID** y **PSR-4**. El proyecto implementa una arquitectura modular, inyección de dependencias propia, autenticación por roles, carrito persistente, integración con **PayPal** y **Conekta**, gestión de inventario, entregas y panel administrativo.
+Sistema de comercio electrónico desarrollado en **PHP 8.5** siguiendo los principios de **Clean Architecture**, **SOLID** y **PSR-4**. El proyecto implementa una arquitectura modular, inyección de dependencias propia, autenticación por roles, carrito persistente, integración con **PayPal** y **Conekta**, gestión de inventario, entregas y panel administrativo.
 
 > Proyecto desarrollado como implementación de referencia para aprendizaje, buenas prácticas de arquitectura y portafolio profesional.
 ---
@@ -113,7 +113,7 @@ No existe una carpeta `Infrastructure`; las dependencias concretas viven dentro 
 
 # Tecnologías
 
-<table><table-section header><table-row header><table-cell header>Tecnología</table-cell><table-cell header>Uso</table-cell></table-row></table-section><table-row><table-cell>PHP 8.3</table-cell><table-cell>Backend.</table-cell></table-row><table-row><table-cell>Composer</table-cell><table-cell>Autoload PSR-4 y dependencias.</table-cell></table-row><table-row><table-cell>MySQL 8</table-cell><table-cell>Persistencia.</table-cell></table-row><table-row><table-cell>Bootstrap 5</table-cell><table-cell>Interfaz pública y administrativa.</table-cell></table-row><table-row><table-cell>Bootstrap Icons</table-cell><table-cell>Iconografía.</table-cell></table-row><table-row><table-cell>Chart.js</table-cell><table-cell>Gráficos del dashboard.</table-cell></table-row><table-row><table-cell>JavaScript ES6</table-cell><table-cell>Frontend modular.</table-cell></table-row><table-row><table-cell>PHPMailer</table-cell><table-cell>Envío de correos.</table-cell></table-row><table-row><table-cell>PayPal Checkout SDK</table-cell><table-cell>Pagos PayPal.</table-cell></table-row><table-row><table-cell>Conekta API + SDK</table-cell><table-cell>Pagos con tarjeta, efectivo y SPEI.</table-cell></table-row></table>
+<table><table-section header><table-row header><table-cell header>Tecnología</table-cell><table-cell header>Uso</table-cell></table-row></table-section><table-row><table-cell>PHP 8.5</table-cell><table-cell>Backend.</table-cell></table-row><table-row><table-cell>Composer</table-cell><table-cell>Autoload PSR-4 y dependencias.</table-cell></table-row><table-row><table-cell>MySQL 8</table-cell><table-cell>Persistencia.</table-cell></table-row><table-row><table-cell>Bootstrap 5</table-cell><table-cell>Interfaz pública y administrativa.</table-cell></table-row><table-row><table-cell>Bootstrap Icons</table-cell><table-cell>Iconografía.</table-cell></table-row><table-row><table-cell>Chart.js</table-cell><table-cell>Gráficos del dashboard.</table-cell></table-row><table-row><table-cell>JavaScript ES6</table-cell><table-cell>Frontend modular.</table-cell></table-row><table-row><table-cell>PHPMailer</table-cell><table-cell>Envío de correos.</table-cell></table-row><table-row><table-cell>PayPal Checkout SDK</table-cell><table-cell>Pagos PayPal.</table-cell></table-row><table-row><table-cell>Conekta API + SDK</table-cell><table-cell>Pagos con tarjeta, efectivo y SPEI.</table-cell></table-row></table>
 
 ---
 
@@ -121,7 +121,7 @@ No existe una carpeta `Infrastructure`; las dependencias concretas viven dentro 
 
 ## Requisitos
 
-* PHP 8.3+
+* PHP 8.5+
 * Composer 2+
 * MySQL 8+
 * Laragon (recomendado) o Apache/Nginx.

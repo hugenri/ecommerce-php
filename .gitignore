@@ -9,6 +9,7 @@
 # Tooling de agentes (metadata de sesión, resúmenes)
 /.claude/
 /.opencode/
+opencode.json
 
 # Sistema operativo
 .DS_Store
@@ -25,3 +26,6 @@ desktop.ini
 
 /scrips/
 /docs/
+
+
+/.playwright-mcp/
