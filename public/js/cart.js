@@ -257,4 +257,13 @@
             }
         });
     });
+
+    // ── Sincronización desde otros componentes (mini-carrito lateral) ──
+    // El mini-carrito publica el payload autoritativo del backend; aquí se
+    // reutiliza el mismo render() para reflejarlo sin recargar la página.
+    document.addEventListener('cart:updated', (e) => {
+        if (e.detail) {
+            render(e.detail);
+        }
+    });
 })();

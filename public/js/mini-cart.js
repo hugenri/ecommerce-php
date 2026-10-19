@@ -162,6 +162,7 @@
 
         var stockBadge = document.createElement('span');
         stockBadge.className = 'badge bg-warning text-dark mini-cart-stock-badge d-none';
+        stockBadge.setAttribute('role', 'status');
         stockBadge.textContent = 'Agotado';
         info.appendChild(stockBadge);
 
@@ -242,9 +243,12 @@
         var badge = row.querySelector('.mini-cart-stock-badge');
         var stepper = row.querySelector('[data-quantity-stepper]');
 
-        var outOfStock = typeof item.stock === 'number' && item.stock <= 0;
+        var hasStock = typeof item.stock === 'number';
+        var quantity = parseInt(item.quantity, 10) || 0;
+        var outOfStock = hasStock && item.stock <= 0;
+        var atMax = hasStock && item.stock > 0 && quantity >= item.stock;
 
-        if (stepper && typeof item.stock === 'number') {
+        if (stepper && hasStock) {
             stepper.setAttribute('data-max', String(item.stock > 0 ? item.stock : 0));
         }
         if (input) {
@@ -254,7 +258,15 @@
             subtotal.textContent = money(item.subtotal);
         }
         if (badge) {
-            badge.classList.toggle('d-none', !outOfStock);
+            if (outOfStock) {
+                badge.textContent = 'Agotado';
+                badge.classList.remove('d-none');
+            } else if (atMax) {
+                badge.textContent = 'Stock máximo alcanzado';
+                badge.classList.remove('d-none');
+            } else {
+                badge.classList.add('d-none');
+            }
         }
         if (global.QuantityStepper) {
             global.QuantityStepper.sync(stepper || row);
@@ -306,7 +318,11 @@
         var input = scope.querySelector('[data-qty-input]');
         var btn = scope.querySelector('[data-add-to-cart-btn]');
         var note = scope.querySelector('[data-detail-note]');
-        var inCartCell = scope.querySelector('[data-detail-in-cart]');
+        // La celda "En tu carrito" vive en la tabla de la ficha, fuera del bloque
+        // [data-product-detail]: se resuelve por product_id si no está en el scope.
+        var productId = scope.getAttribute('data-product-id');
+        var inCartCell = scope.querySelector('[data-detail-in-cart]')
+            || (productId ? document.querySelector('[data-detail-in-cart][data-product-id="' + productId + '"]') : null);
         var availCell = scope.querySelector('[data-detail-available]');
 
         if (inCartCell) {
@@ -397,6 +413,7 @@
         footerEl.classList.toggle('d-none', !hasItems);
 
         syncPageStock(payload);
+        document.dispatchEvent(new CustomEvent('cart:updated', { detail: payload }));
 
         if (global.CartCounter) {
             global.CartCounter.set(count);

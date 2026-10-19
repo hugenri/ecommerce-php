@@ -61,7 +61,7 @@ ob_start();
                 </tr>
                 <tr class="<?= $cartQuantity > 0 ? '' : 'd-none' ?>">
                     <td class="text-muted">En tu carrito</td>
-                    <td data-detail-in-cart><?= $cartQuantity ?></td>
+                    <td data-detail-in-cart data-product-id="<?= (int) $product->getProductId() ?>"><?= $cartQuantity ?></td>
                 </tr>
             </table>
 
